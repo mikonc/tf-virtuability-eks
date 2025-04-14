@@ -1,6 +1,9 @@
 # AWS EKS Terraform Module
 This Terraform module deploys a VPC, Amazon EKS cluster with a simple web server that is accessible via HTTP.
 
+## Simplified architecture diagram
+![Diagram](diagram.png)
+
 ## Features
 - Creates a VPC with public and private subnets across multiple availability zones
 - Deploys an EKS cluster with managed node groups
