@@ -11,7 +11,7 @@ resource "aws_security_group" "eks_cluster_sg" {
   }
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-cluster-sg"
     }
@@ -39,7 +39,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-  tags = var.tags
+  tags = local.tags
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_cluster_policy,
@@ -60,7 +60,7 @@ resource "aws_security_group" "eks_node_sg" {
   }
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-node-sg"
       "kubernetes.io/cluster/${var.cluster_name}" = "owned"
@@ -120,7 +120,7 @@ resource "aws_eks_node_group" "eks_node_group" {
   labels = var.node_labels
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-node-group"
     }

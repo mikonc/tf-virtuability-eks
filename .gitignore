@@ -2,3 +2,5 @@
 *.tfstate.backup
 .terraform.lock.hcl
 .terraform/*
+examples/layered/.terraform/
+examples/.terraform/

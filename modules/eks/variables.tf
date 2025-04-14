@@ -61,9 +61,14 @@ variable "node_disk_size" {
 }
 
 variable "node_capacity_type" {
-  description = "Capacity type for the worker nodes (ON_DEMAND or SPOT)"
+  description = "Capacity type for the worker nodes"
   type        = string
   default     = "ON_DEMAND"
+
+  validation {
+    condition     = contains(["ON_DEMAND", "SPOT", "CAPACITY_BLOCK"], var.node_capacity_type)
+    error_message = "expected capacity_type to be one of [\"ON_DEMAND\" \"SPOT\" \"CAPACITY_BLOCK\"], got ${var.node_capacity_type}"
+  }
 }
 
 variable "node_labels" {

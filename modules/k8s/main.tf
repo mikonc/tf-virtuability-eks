@@ -161,7 +161,8 @@ resource "kubernetes_ingress_v1" "app" {
       "alb.ingress.kubernetes.io/target-type" = "ip"
       "alb.ingress.kubernetes.io/load-balancer-name" = "${var.app_name}-app-alb"
       "alb.ingress.kubernetes.io/backend-protocol" = "HTTP"
-      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\":80}]"
+      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\":80}]" # Listener {\"HTTPS\":443} needed for SSL as well as http to https redirection
+      # "alb.ingress.kubernetes.io/certificate-arn" = var.certificate_arn
     }
   }
 

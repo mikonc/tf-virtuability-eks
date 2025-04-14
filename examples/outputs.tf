@@ -22,12 +22,7 @@ output "private_subnet_ids" {
 # ACM Certificate outputs
 # output "acm_certificate_arn" {
 #   description = "The ARN of the ACM certificate"
-#   value       = aws_acm_certificate.cert.arn
-# }
-
-# output "acm_certificate_domain_name" {
-#   description = "The domain name of the ACM certificate"
-#   value       = aws_acm_certificate.cert.domain_name
+#   value       = module.acm.certificate_arn
 # }
 
 # EKS Cluster outputs
@@ -46,28 +41,33 @@ output "cluster_security_group_id" {
   value       = module.eks.cluster_security_group_id
 }
 
-# # Kubernetes resources outputs
-# output "web_service_name" {
-#   description = "Name of the web server service"
-#   value       = module.k8s.web_service_name
-# }
+output "cluster_oidc_provider_arn" {
+  description = "The ARN of the OIDC Provider"
+  value       = module.eks.oidc_provider_arn
+}
 
-# output "web_service_namespace" {
-#   description = "Namespace of the web server service"
-#   value       = module.k8s.web_service_namespace
-# }
+# Kubernetes resources outputs
+output "k8s_namespace" {
+  description = "The name of the Kubernetes namespace"
+  value       = module.k8s.namespace
+}
 
-# output "web_service_load_balancer_hostname" {
-#   description = "Hostname of the load balancer for the web server service"
-#   value       = module.k8s.web_service_load_balancer_hostname
-# }
+output "k8s_deployment_name" {
+  description = "The name of the Nginx deployment"
+  value       = module.k8s.deployment_name
+}
 
-# output "helm_release_name" {
-#   description = "Name of the Helm release"
-#   value       = module.k8s.helm_release_name
-# }
+output "k8s_service_name" {
+  description = "The name of the Kubernetes service"
+  value       = module.k8s.service_name
+}
 
-# output "helm_release_status" {
-#   description = "Status of the Helm release"
-#   value       = module.k8s.helm_release_status
-# }
+output "k8s_ingress_name" {
+  description = "The name of the Kubernetes ingress"
+  value       = module.k8s.ingress_name
+}
+
+output "k8s_load_balancer_name" {
+  description = "The name of the AWS Load Balancer"
+  value       = module.k8s.load_balancer_name
+}

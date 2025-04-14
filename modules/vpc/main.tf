@@ -1,10 +1,14 @@
+locals {
+    tags = merge(var.tags, {"Module" = "vpc"})
+}
+
 resource "aws_vpc" "eks_vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = var.vpc_enable_dns_hostnames
   enable_dns_support   = var.vpc_enable_dns_support
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-vpc"
     }
@@ -20,7 +24,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name                                           = "${var.cluster_name}-public-${var.availability_zones[count.index]}"
       "kubernetes.io/cluster/${var.cluster_name}"    = "shared"
@@ -38,7 +42,7 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name                                           = "${var.cluster_name}-private-${var.availability_zones[count.index]}"
       "kubernetes.io/cluster/${var.cluster_name}"    = "shared"
@@ -51,7 +55,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.eks_vpc.id
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-igw"
     }
@@ -63,7 +67,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-nat-eip-${var.availability_zones[count.index]}"
     }
@@ -77,7 +81,7 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-nat-${var.availability_zones[count.index]}"
     }
@@ -95,7 +99,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-public-rt"
     }
@@ -113,7 +117,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-private-rt-${var.availability_zones[count.index]}"
     }

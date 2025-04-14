@@ -6,7 +6,7 @@ resource "aws_kms_key" "eks_key" {
   enable_key_rotation     = true
 
   tags = merge(
-    var.tags,
+    local.tags,
     {
       Name = "${var.cluster_name}-kms-key"
     }

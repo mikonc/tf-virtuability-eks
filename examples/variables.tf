@@ -1,7 +1,7 @@
 variable "cluster_name" {
   description = "Name of the EKS cluster"
   type        = string
-  default     = "layered-eks-cluster"
+  default     = "eks-cluster"
 }
 
 variable "region" {
@@ -13,7 +13,11 @@ variable "region" {
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
-  default     = "10.0.0.0/16"
+
+  validation {
+    condition     = var.vpc_cidr == null ? true : can(cidrsubnet(var.vpc_cidr, 0, 0))
+    error_message = "Must be a valid CIDR notation, e.g. 10.0.0.0/24."
+  }
 }
 
 variable "availability_zones" {
@@ -44,6 +48,11 @@ variable "node_max_size" {
   description = "Maximum number of worker nodes"
   type        = number
   default     = 3
+
+  validation {
+    condition     = var.node_max_size > var.node_min_size
+    error_message = "The maximum number of worker nodes must be greater than the minimum number of worker nodes."
+  }
 }
 
 variable "node_min_size" {
@@ -65,15 +74,20 @@ variable "node_disk_size" {
 }
 
 variable "node_capacity_type" {
-  description = "Capacity type for the worker nodes (ON_DEMAND or SPOT)"
+  description = "Capacity type for the worker nodes (ON_DEMAND, SPOT, or CAPACITY_BLOCK)"
   type        = string
   default     = "ON_DEMAND"
+
+  validation {
+    condition     = contains(["ON_DEMAND", "SPOT", "CAPACITY_BLOCK"], var.node_capacity_type)
+    error_message = "expected capacity_type to be one of [\"ON_DEMAND\" \"SPOT\" \"CAPACITY_BLOCK\"], got ${var.node_capacity_type}"
+  }
 }
 
 variable "node_labels" {
   description = "Labels to apply to the worker nodes"
   type        = map(string)
-  default     = {
+  default = {
     "role" = "web-server"
   }
 }
@@ -96,10 +110,22 @@ variable "domain_name" {
   default     = "example.com"
 }
 
+variable "subject_alternative_names" {
+  description = "A list of subject alternative names for the ACM certificate."
+  type        = list(string)
+  default     = []
+}
+
+variable "zone_id" {
+  description = "Route 53 hosted zone ID"
+  type        = string
+  default     = ""
+}
+
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
-  default     = {
+  default = {
     Environment = "dev"
     Terraform   = "true"
     Project     = "mikolaj-demo"
@@ -118,13 +144,19 @@ variable "nginx_image" {
   default     = "nginx:latest"
 }
 
-variable "container_port" {
-  description = "Port on which the NGINX container will listen"
-  type        = number
-  default     = 80
-}
-
 variable "eks_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
   type        = bool
+}
+
+variable "certificate_arn" {
+  description = "ARN of the ACM certificate"
+  type        = string
+  default     = ""
+}
+
+variable "wait_for_cert_validation" {
+  description = "Should the module wait for the certificate to be validated?"
+  type        = bool
+  default     = true
 }

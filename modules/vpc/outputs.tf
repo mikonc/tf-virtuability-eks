@@ -37,3 +37,8 @@ output "availability_zones" {
   description = "List of availability zones used"
   value       = var.availability_zones
 }
+
+output "public_subnets" {
+  description = "List of public subnets"
+  value       = aws_subnet.public[*]
+}

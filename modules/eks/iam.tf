@@ -14,7 +14,7 @@ resource "aws_iam_role" "eks_cluster_role" {
     ]
   })
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
@@ -43,7 +43,7 @@ resource "aws_iam_role" "eks_node_role" {
     ]
   })
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
@@ -71,17 +71,9 @@ resource "aws_iam_openid_connect_provider" "oidc_provider" {
   thumbprint_list = [data.tls_certificate.this.certificates[0].sha1_fingerprint]
   tags = merge(
     { Name = "${var.cluster_name}-eks-irsa" },
-    var.tags
+    local.tags
   )
 }
-
-# data "aws_eks_cluster" "this" {
-#   name = var.cluster_name
-# }
-
-# data "aws_iam_openid_connect_provider" "this" {
-#   url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
-# }
 
 module "lb_role" {
   source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
